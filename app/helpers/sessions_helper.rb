@@ -37,8 +37,27 @@ module SessionsHelper
     end
   end
   
+  #渡されたユーザーがログイン済みのユーザーであればtrueを返します
+  def current_user?(user)
+    user == current_user
+  end
+  
+  #現在ログイン中のUserがいればtrue そうでなければfalseを返します
   def logged_in?
     !current_user.nil?
+  end
+  
+  #記憶しているURL(またはデフォルトURL)にリレダイレクトします。
+  #redirect_back_orはUrlが存在する場合はUrlへ　ない場合はdefaultで設定したUrlへリダイレクトする
+  def redirect_back_or(default_url)
+    redirect_to(session[:forwarding_url] || default_url)
+    session.delete(:forwarding_url)
+  end
+
+  #アクセルしようとしたURLを記憶します
+   #request.original_urlでURLを取得できる　if request.get? 取得したURLがgetであるか確認している getでない場合はnil
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get? 
   end
   
 end
