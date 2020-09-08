@@ -2,13 +2,14 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index]
   before_action :set_one_month, only: :show
+ before_action :admin_or_correct_user, only: [:show]
 
   
   def index
-    @users = User.paginate(page: params[20])
-  end
+      @users = User.paginate(page: params[:page]).search(params[:search])
+    end
   
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
@@ -25,7 +26,7 @@ def create
       flash[:success] = '新規登録に成功しました'
       redirect_to @user
     else
-      render :new
+      render :new 
     end
   end
   
